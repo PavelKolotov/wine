@@ -9,8 +9,18 @@ env = Environment(
     autoescape=select_autoescape(['html', 'xml'])
 )
 
-template = env.get_template('template.html')
+winery_age_now = datetime.datetime.now().year - 1920
 
+def get_age_name(year):
+    num_years = int(str(year)[-2:])
+    if num_years < 21 and num_years > 4 or int(str(num_years)[-1:]) == 0:
+        return 'лет'
+    elif int(str(num_years)[-1:]) == 1:
+        return 'год'
+    else:
+        return 'года'
+
+template = env.get_template('template.html')
 
 rendered_page = template.render(
     wine1_img='images/hvanchkara.png',
@@ -37,7 +47,8 @@ rendered_page = template.render(
     wine6_name='Шардоне',
     wine6_grape_sort='Шардоне',
     wine6_price='350 р.',
-    winery_age=datetime.datetime.now().year - 1920
+    winery_age=winery_age_now,
+    age_name=get_age_name(winery_age_now)
 
 )
 
