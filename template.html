@@ -113,80 +113,27 @@
             </p>
           </div>
         </div>
+        {% for category, wines in wines.items() %}
         <div class="row">
+          <div class="col-12 section-title text-center mb-5">
+            <h2 class="d-block">{{category}}</h2>
+          </div>
+          {% for wine in wines %}
           <div class="col-lg-4 mb-5 col-md-6">
             <div class="wine_v_1 text-center pb-4 pt-5">
-              <img src="{{wine1_img}}" alt="Image" class="img-fluid">
+              <img src="images/{{wine.Картинка}}" alt="Image" class="img-fluid">
               <div>
-                <h3 class="heading mt-3 mb-3 text-dark">{{wine1_name}}</h3>
+                <h3 class="heading mt-3 mb-3 text-dark">{{wine.Название}}</h3>
                 <p>
-                  Сорт винограда - {{wine1_grape_sort}}<br/>
-                  <span class="price">{{wine1_price}}</span>
+                  Сорт винограда - {{wine.Сорт}}<br/>
+                  <span class="price">{{wine.Цена}} р.</span>
                 </p>
               </div>
             </div>
           </div>
-          <div class="col-lg-4 mb-5 col-md-6">
-            <div class="wine_v_1 text-center pb-4 pt-5">
-              <img src="{{wine2_img}}" alt="Image" class="img-fluid">
-              <div>
-                <h3 class="heading mt-3 mb-3 text-dark">{{wine2_name}}</h3>
-                <p>
-                  Сорт винограда - {{wine2_grape_sort}}<br/>
-                  <span class="price">{{wine2_price}}</span>
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-4 mb-5 col-md-6">
-            <div class="wine_v_1 text-center pb-4 pt-5">
-              <img src="{{wine3_img}}" alt="Image" class="img-fluid">
-              <div>
-                <h3 class="heading mt-3 mb-3 text-dark">{{wine3_name}}</h3>
-                <p>
-                  Сорт винограда - {{wine3_grape_sort}}<br/>
-                  <span class="price">{{wine3_price}}</span>
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-4 mb-5 col-md-6">
-            <div class="wine_v_1 text-center pb-4 pt-5">
-              <img src="{{wine4_img}}" alt="Image" class="img-fluid">
-              <div>
-                <h3 class="heading mt-3 mb-3 text-dark">{{wine4_name}}</h3>
-                <p>
-                  Сорт винограда - {{wine4_grape_sort}}<br/>
-                  <span class="price">{{wine4_price}}</span>
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-4 mb-5 col-md-6">
-            <div class="wine_v_1 text-center pb-4 pt-5">
-              <img src="{{wine5_img}}" alt="Image" class="img-fluid">
-              <div>
-                <h3 class="heading mt-3 mb-3 text-dark">{{wine5_name}}</h3>
-                <p>
-                  Сорт винограда - {{wine5_grape_sort}}<br/>
-                  <span class="price">{{wine5_price}}</span>
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-4 mb-5 col-md-6">
-            <div class="wine_v_1 text-center pb-4 pt-5">
-              <img src="{{wine6_img}}" alt="Image" class="img-fluid">
-              <div>
-                <h3 class="heading mt-3 mb-3 text-dark">{{wine6_name}}</h3>
-                <p>
-                  Сорт винограда - {{wine6_grape_sort}}<br/>
-                  <span class="price">{{wine6_price}}</span>
-                </p>
-              </div>
-            </div>
-          </div>
+          {% endfor %}
         </div>
+        {% endfor %}
       </div>
     </div>
 
