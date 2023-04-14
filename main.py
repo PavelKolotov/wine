@@ -1,15 +1,14 @@
 import datetime
+import pandas
 
+
+from collections import defaultdict
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 
-from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-env = Environment(
-    loader=FileSystemLoader('.'),
-    autoescape=select_autoescape(['html', 'xml'])
-)
+YEAR_FOUNDATION = 1920
 
-winery_age_now = datetime.datetime.now().year - 1920
 
 def get_age_name(year):
     num_years = int(str(year)[-2:])
@@ -20,36 +19,29 @@ def get_age_name(year):
     else:
         return 'года'
 
+
+env = Environment(
+    loader=FileSystemLoader('.'),
+    autoescape=select_autoescape(['html', 'xml'])
+)
+
+winery_age_now = datetime.datetime.now().year - YEAR_FOUNDATION
+excel_data_df = pandas.read_excel('wine2.xlsx')
+wines = excel_data_df.to_dict(orient='records')
+
 template = env.get_template('template.html')
 
-rendered_page = template.render(
-    wine1_img='images/hvanchkara.png',
-    wine1_name='Хванчкара',
-    wine1_grape_sort='Александраули',
-    wine1_price='550 р.',
-    wine2_img='images/rkaciteli.png',
-    wine2_name='Ркацители',
-    wine2_grape_sort='Ркацители',
-    wine2_price='499 р.',
-    wine3_img='images/belaya_ledi.png',
-    wine3_name='Белая леди',
-    wine3_grape_sort='Дамский пальчик',
-    wine3_price='399 р.',
-    wine4_img='images/izabella.png',
-    wine4_name='Изабелла',
-    wine4_grape_sort='Изабелла',
-    wine4_price='350 р.',
-    wine5_img='images/granatovyi_braslet.png',
-    wine5_name='Гранатовый браслет',
-    wine5_grape_sort='Мускат розовый',
-    wine5_price='350 р.',
-    wine6_img='images/shardone.png',
-    wine6_name='Шардоне',
-    wine6_grape_sort='Шардоне',
-    wine6_price='350 р.',
-    winery_age=winery_age_now,
-    age_name=get_age_name(winery_age_now)
+wines_categories = defaultdict(list)
+for wine in wines:
+    wine_category = list(wine.keys())[0]
+    for keys in wine:
+        if keys == wine_category:
+            wines_categories[wine[keys]].append(wine)
 
+rendered_page = template.render(
+    wines=wines_categories,
+    winery_age=winery_age_now,
+    age_name=get_age_name(winery_age_now),
 )
 
 with open('index.html', 'w', encoding="utf8") as file:
