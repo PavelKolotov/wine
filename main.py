@@ -20,32 +20,35 @@ def get_age_name(year):
         return 'года'
 
 
-env = Environment(
-    loader=FileSystemLoader('.'),
-    autoescape=select_autoescape(['html', 'xml'])
-)
+def main():
+    env = Environment(
+        loader=FileSystemLoader('.'),
+        autoescape=select_autoescape(['html', 'xml'])
+    )
+    winery_age_now = datetime.datetime.now().year - YEAR_FOUNDATION
+    excel_data_df = pandas.read_excel('wine.xlsx', na_values='nan', keep_default_na=False)
+    wines = excel_data_df.to_dict(orient='records')
+    template = env.get_template('template.html')
+    wines_categories = defaultdict(list)
 
-winery_age_now = datetime.datetime.now().year - YEAR_FOUNDATION
-excel_data_df = pandas.read_excel('wine2.xlsx')
-wines = excel_data_df.to_dict(orient='records')
+    for wine in wines:
+        wine_category = list(wine.keys())[0]
+        for keys in wine:
+            if keys == wine_category:
+                wines_categories[wine[keys]].append(wine)
 
-template = env.get_template('template.html')
+    rendered_page = template.render(
+        wines=wines_categories,
+        winery_age=winery_age_now,
+        age_name=get_age_name(winery_age_now),
+    )
 
-wines_categories = defaultdict(list)
-for wine in wines:
-    wine_category = list(wine.keys())[0]
-    for keys in wine:
-        if keys == wine_category:
-            wines_categories[wine[keys]].append(wine)
+    with open('index.html', 'w', encoding="utf8") as file:
+        file.write(rendered_page)
 
-rendered_page = template.render(
-    wines=wines_categories,
-    winery_age=winery_age_now,
-    age_name=get_age_name(winery_age_now),
-)
+    server = HTTPServer(('0.0.0.0', 8000), SimpleHTTPRequestHandler)
+    server.serve_forever()
 
-with open('index.html', 'w', encoding="utf8") as file:
-    file.write(rendered_page)
 
-server = HTTPServer(('0.0.0.0', 8000), SimpleHTTPRequestHandler)
-server.serve_forever()
+if __name__ == "__main__":
+    main()
