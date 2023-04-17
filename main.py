@@ -1,13 +1,15 @@
 import datetime
 import pandas
+import argparse
 
 
 from collections import defaultdict
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from http.server import HTTPServer, SimpleHTTPRequestHandler
+from environs import Env
 
 
-YEAR_FOUNDATION = 1920
+FOUNDATION_YEAR = 1920
 
 
 def get_age_name(year):
@@ -21,21 +23,25 @@ def get_age_name(year):
 
 
 def main():
+    env = Env()
+    env.read_env()
+    file_path = env('FILE_PATH')
+    parser = argparse.ArgumentParser()
+    parser.add_argument('file_path', default=file_path)
+    args = parser.parse_args()
     env = Environment(
         loader=FileSystemLoader('.'),
         autoescape=select_autoescape(['html', 'xml'])
     )
-    winery_age_now = datetime.datetime.now().year - YEAR_FOUNDATION
-    excel_data_df = pandas.read_excel('wine.xlsx', na_values='nan', keep_default_na=False)
+    winery_age_now = datetime.datetime.now().year - FOUNDATION_YEAR
+    excel_data_df = pandas.read_excel(args.file_path, na_values='nan', keep_default_na=False)
     wines = excel_data_df.to_dict(orient='records')
     template = env.get_template('template.html')
     wines_categories = defaultdict(list)
 
     for wine in wines:
         wine_category = list(wine.keys())[0]
-        for keys in wine:
-            if keys == wine_category:
-                wines_categories[wine[keys]].append(wine)
+        wines_categories[wine[wine_category]].append(wine)
 
     rendered_page = template.render(
         wines=wines_categories,
